@@ -1,25 +1,27 @@
 [build-system]
-requires = ["setuptools>=61", "wheel", "cibuildwheel", "cryptography", "cmake", "ninja"]
+requires = ["setuptools>=61", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "tgcrypto"
-requires-python = ">=3.8,<3.15"
+version = "1.2.5"
+description = "Fast and Portable Cryptography Extension Library for Pyrogram"
+readme = "README.md"
+requires-python = ">=3.7,<3.15"
+authors = [
+  { name = "Dan", email = "dan@pyrogram.org" }
+]
+license = { text = "LGPLv3+" }
 
 [tool.cibuildwheel]
 build = "cp38-* cp39-* cp310-* cp311-* cp312-* cp313-* cp314-*"
+test-skip = ["*-win*"]
 
-# Linux supported archs
 [tool.cibuildwheel.linux]
 archs = ["x86_64", "aarch64"]
 
-# macOS supported archs
 [tool.cibuildwheel.macos]
 archs = ["x86_64", "arm64", "universal2"]
 
-# Windows — use AMD64 (NOT x86_64)
 [tool.cibuildwheel.windows]
 archs = ["AMD64"]
-
-# skip test on windows (tox issues)
-test-skip = ["*-win*"]
