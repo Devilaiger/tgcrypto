@@ -7,6 +7,20 @@ name = "tgcrypto"
 requires-python = ">=3.8,<3.15"
 
 [tool.cibuildwheel]
+# Build on all platforms
 build = "cp38-* cp39-* cp310-* cp311-* cp312-* cp313-* cp314-*"
+
+# Linux wheels → only architectures Linux supports
+[tool.cibuildwheel.linux]
+archs = ["x86_64", "aarch64"]
+
+# macOS wheels → support universal2 & arm64
+[tool.cibuildwheel.macos]
 archs = ["x86_64", "arm64", "universal2"]
+
+# Windows — default is fine
+[tool.cibuildwheel.windows]
+archs = ["x86_64"]
+
+# Skip Windows tests (tgcrypto has issues with tox on Windows)
 test-skip = ["*-win*"]
