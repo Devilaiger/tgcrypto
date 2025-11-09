@@ -1,11 +1,12 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel", "setuptools_scm"]
+requires = ["setuptools>=61", "wheel", "cibuildwheel", "cryptography", "cmake", "ninja"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "TgCrypto"
-version = "1.2.6-dev0"
-description = "Fast cryptography extension for Pyrogram (fork for 3.14 support)"
-readme = "README.md"
-requires-python = ">=3.8"
-dependencies = []
+name = "tgcrypto"
+requires-python = ">=3.8,<3.15"
+
+[tool.cibuildwheel]
+build = "cp38-* cp39-* cp310-* cp311-* cp312-* cp313-* cp314-*"
+archs = ["x86_64", "arm64", "universal2"]
+test-skip = ["*-win*"]
