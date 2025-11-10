@@ -1,4 +1,4 @@
-﻿name: Build and publish wheels
+name: Build and publish wheels
 
 on:
   workflow_dispatch:
@@ -48,8 +48,19 @@ jobs:
     steps:
       - name: Download built wheels (all artifacts)
         uses: actions/download-artifact@v4
+        # download into workspace so artifacts are created as subfolders
         with:
-          path: wheelhouse
+          path: .
+
+      - name: Aggregate wheels into wheelhouse
+        run: |
+          set -e
+          mkdir -p wheelhouse
+          # copy all .whl files from any subfolder into top-level wheelhouse/
+          # '|| true' avoids non-zero exit if find finds nothing (we check later)
+          find . -type f -name "*.whl" -print0 | xargs -0 -I{} cp -v {} wheelhouse/ || true
+          echo "Collected wheels:"
+          ls -la wheelhouse || true
 
       - name: Install twine
         run: python -m pip install --upgrade twine
@@ -59,6 +70,10 @@ jobs:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
         run: |
+          if [ -z "$(ls -A wheelhouse 2>/dev/null)" ]; then
+            echo "ERROR: no wheels found in wheelhouse — aborting publish"
+            exit 1
+          fi
           python -m twine upload wheelhouse/*.whl
 
 
