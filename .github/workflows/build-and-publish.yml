@@ -27,11 +27,12 @@ jobs:
         env:
           CIBW_ENVIRONMENT: "PYTHONWARNINGS=default"
           CIBW_BUILD: "cp38-* cp39-* cp310-* cp311-* cp312-* cp313-* cp314-*"
-          # Use per-platform arch vars (windows expects AMD64)
-          CIBW_ARCHS_LINUX: "x86_64 aarch64"
+          # Linux: force x86_64 manylinux images only (prevents exec format errors on ubuntu runners)
+          CIBW_ARCHS_LINUX: "x86_64"
+          # macOS: build x86_64 / universal2 / arm64
           CIBW_ARCHS_MACOS: "x86_64 universal2 arm64"
+          # Windows: use AMD64 (Windows name for x86_64)
           CIBW_ARCHS_WINDOWS: "AMD64"
-
 
       - name: Upload wheels as artifact
         uses: actions/upload-artifact@v4
@@ -59,6 +60,5 @@ jobs:
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
         run: |
           python -m twine upload wheelhouse/*.whl
-
 
 
