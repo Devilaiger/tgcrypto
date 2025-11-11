@@ -34,6 +34,13 @@ jobs:
           # Windows: use AMD64 (Windows name for x86_64)
           CIBW_ARCHS_WINDOWS: "AMD64"
 
+          # --- DEBUG / STABILITY additions ---
+          # Show more build output so we can see the pip/setuptools/compiler error
+          CIBW_BUILD_VERBOSITY: "2"
+          # Ensure modern pip/setuptools/wheel are used inside the build container
+          CIBW_BEFORE_BUILD: "python -m pip install --upgrade pip setuptools wheel"
+          # ------------------------------------
+
       - name: Upload wheels as artifact
         uses: actions/upload-artifact@v4
         with:
@@ -75,5 +82,3 @@ jobs:
             exit 1
           fi
           python -m twine upload wheelhouse/*.whl
-
-
