@@ -1,6 +1,5 @@
 [build-system]
-# require a modern setuptools that supports project.license-files and PEP 621 metadata
-requires = ["setuptools>=77", "wheel"]
+requires = ["setuptools>=61", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -12,10 +11,7 @@ requires-python = ">=3.7,<3.15"
 authors = [
   { name = "Dan", email = "dan@pyrogram.org" }
 ]
-# Use an SPDX expression (single string) instead of the old TOML table
-license = "LGPL-3.0-or-later"
-# Ensure license files are included in the built distribution
-license-files = ["COPYING.lesser", "COPYING", "NOTICE"]
+license = { text = "LGPLv3+" }
 
 [tool.cibuildwheel]
 build = "cp38-* cp39-* cp310-* cp311-* cp312-* cp313-* cp314-*"
