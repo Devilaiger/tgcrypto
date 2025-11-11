@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tgcrypto-devilaiger"
-version = "1.2.5"
+version = "1.2.6"
 description = "Fast and Portable Cryptography Extension Library for Pyrogram"
 readme = "README.md"
 requires-python = ">=3.7,<3.15"
@@ -47,6 +47,7 @@ archs = ["x86_64", "arm64", "universal2"]
 
 [tool.cibuildwheel.windows]
 archs = ["AMD64"]
+
 
 
 
