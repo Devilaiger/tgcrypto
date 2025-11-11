@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python packaging tools
+      - name: Set up Python packaging tools (runner)
         run: python -m pip install --upgrade pip setuptools wheel
 
       - name: Build wheels with cibuildwheel
@@ -25,32 +25,31 @@ jobs:
         with:
           output-dir: wheelhouse
         env:
-          # common configuration
           CIBW_ENVIRONMENT: "PYTHONWARNINGS=default"
           CIBW_BUILD: "cp38-* cp39-* cp310-* cp311-* cp312-* cp313-* cp314-*"
-
-          # platform-specific architectures
-          CIBW_ARCHS_LINUX: "x86_64"                    # force linux manylinux images to x86_64
+          # Linux: force x86_64 manylinux images only (prevents exec format errors on ubuntu runners)
+          CIBW_ARCHS_LINUX: "x86_64"
+          # macOS: build x86_64 / universal2 / arm64
           CIBW_ARCHS_MACOS: "x86_64 universal2 arm64"
+          # Windows: use AMD64 (Windows name for x86_64)
           CIBW_ARCHS_WINDOWS: "AMD64"
 
-          # debugging / stability
-          CIBW_BUILD_VERBOSITY: "3"                     # show pip/build tracebacks in job log
+          # Debug / stability: make pip/setuptools prints more verbose inside containers
+          CIBW_BUILD_VERBOSITY: "3"
+          # Ensure modern pip/setuptools/wheel inside the container (helpful for new metadata / build-backends)
           CIBW_BEFORE_BUILD: "python -m pip install --upgrade pip setuptools wheel || true"
 
-      # Try to capture local cache/logs and upload them (best-effort)
-      - name: Collect cibuildwheel logs (best-effort)
+      - name: Collect cibuildwheel logs (always)
         if: always()
         run: |
-          set -e || true
           mkdir -p cibuildwheel-logs || true
-          # copy local cibuildwheel cache (if present)
+          # copy cibuildwheel cache (if present on the runner)
           cp -r /home/runner/.cache/cibuildwheel cibuildwheel-logs 2>/dev/null || true
-          # save the last 400 lines of the Actions log pattern (best-effort)
-          echo "Attempt to save last 400 lines of any *.log in workspace (if present)" > cibuildwheel-logs/README.txt || true
-          for f in /home/runner/work/**/**/*.log /home/runner/work/*.log; do
-            [ -f "$f" ] && (echo "==== $f ====" >> cibuildwheel-logs/job-tail.txt; tail -n 400 "$f" >> cibuildwheel-logs/job-tail.txt) || true
-          done
+          # capture last lines of the job log(s) if available
+          echo "==== job log tail ====" > cibuildwheel-logs/job-tail.txt || true
+          (for f in /home/runner/work/*/*/*.log 2>/dev/null; do tail -n 200 "$f" >> cibuildwheel-logs/job-tail.txt || true; done) || true
+          # try to capture any temp build output from /tmp/cibuildwheel that the action may have written out to runner
+          cp -r /tmp/cibuildwheel cibuildwheel-logs 2>/dev/null || true
         continue-on-error: true
 
       - name: Upload cibuildwheel logs

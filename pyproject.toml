@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=77", "wheel"]
+requires = ["setuptools>=65", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,53 +7,19 @@ name = "tgcrypto"
 version = "1.2.5"
 description = "Fast and Portable Cryptography Extension Library for Pyrogram"
 readme = "README.md"
-readme-content-type = "text/markdown"
 requires-python = ">=3.7,<3.15"
-
 authors = [
   { name = "Dan", email = "dan@pyrogram.org" }
 ]
-
-# Use an SPDX expression (string) — avoids deprecated TOML table form
-license = "LGPL-3.0-or-later"
-
-# Make sure license files are included in built distributions (fixes Twine error)
-license-files = ["COPYING", "COPYING.lesser", "NOTICE"]
-
-# Optional but helpful metadata (PEP 621 fields)
-keywords = ["pyrogram", "telegram", "crypto", "cryptography", "encryption", "mtproto", "extension", "library", "aes"]
-classifiers = [
-  "Development Status :: 5 - Production/Stable",
-  "Intended Audience :: Developers",
-  "License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)",
-  "Operating System :: OS Independent",
-  "Programming Language :: C",
-  "Programming Language :: Python",
-  "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.7",
-  "Programming Language :: Python :: 3.8",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: 3.12",
-  "Programming Language :: Python :: Implementation :: CPython",
-  "Topic :: Security",
-  "Topic :: Security :: Cryptography",
-  "Topic :: Internet",
-  "Topic :: Communications",
-  "Topic :: Communications :: Chat",
-  "Topic :: Software Development :: Libraries",
-  "Topic :: Software Development :: Libraries :: Python Modules"
-]
-
-urls = { Tracker = "https://github.com/pyrogram/tgcrypto/issues", Community = "https://t.me/pyrogram", Source = "https://github.com/pyrogram/tgcrypto", Documentation = "https://docs.pyrogram.org" }
+# Use an SPDX identifier string or provide text. Avoid the old 'license-file' field.
+license = { text = "LGPL-3.0-or-later" }
 
 [tool.cibuildwheel]
 build = "cp38-* cp39-* cp310-* cp311-* cp312-* cp313-* cp314-*"
 test-skip = ["*-win*"]
 
 [tool.cibuildwheel.linux]
-archs = ["x86_64", "aarch64"]
+archs = ["x86_64"]
 
 [tool.cibuildwheel.macos]
 archs = ["x86_64", "arm64", "universal2"]
