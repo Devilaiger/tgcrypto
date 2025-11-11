@@ -1,5 +1,6 @@
 [build-system]
-requires = ["setuptools>=61", "wheel"]
+# Requires modern setuptools so PEP 621 metadata (license-files) works
+requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -8,16 +9,31 @@ version = "1.2.5"
 description = "Fast and Portable Cryptography Extension Library for Pyrogram"
 readme = "README.md"
 requires-python = ">=3.7,<3.15"
+
 authors = [
   { name = "Dan", email = "dan@pyrogram.org" }
 ]
-license = { text = "LGPLv3+" }
+
+# ✅ Fixed: SPDX identifier (instead of invalid license text table)
+license = "LGPL-3.0-or-later"
+
+# ✅ Ensures license files are packaged correctly in wheels
+license-files = [
+  "COPYING",
+  "COPYING.lesser",
+  "LICENSE",
+  "NOTICE",
+]
 
 [tool.cibuildwheel]
+# Builds for CPython 3.8 → 3.14
 build = "cp38-* cp39-* cp310-* cp311-* cp312-* cp313-* cp314-*"
+
+# Windows tests hang for tgcrypto, this skips them
 test-skip = ["*-win*"]
 
 [tool.cibuildwheel.linux]
+# Prevents ubuntu runner from pulling wrong arch images
 archs = ["x86_64", "aarch64"]
 
 [tool.cibuildwheel.macos]
