@@ -30,31 +30,32 @@ jobs:
           CIBW_ARCHS_LINUX: "x86_64"
           CIBW_ARCHS_MACOS: "x86_64 universal2 arm64"
           CIBW_ARCHS_WINDOWS: "AMD64"
-
-          # make builds more verbose so pip/setuptools traces show
+          # make builds more verbose so pip/setuptools traces show (debug)
           CIBW_BUILD_VERBOSITY: "3"
-          # ensure modern pip/setuptools/wheel in-container
+          # ensure modern pip/setuptools/wheel in-container (debug)
           CIBW_BEFORE_BUILD: "python -m pip install --upgrade pip setuptools wheel || true"
+
       - name: Collect cibuildwheel logs (if any)
         if: failure() || always()
         shell: bash
         run: |
           set -e
           mkdir -p cibuildwheel-logs || true
+
           # try to copy any runner-local cache/logs
           cp -r /home/runner/.cache/cibuildwheel cibuildwheel-logs 2>/dev/null || true
+
           # Try to capture system journal (only works on systemd systems)
           if command -v journalctl >/dev/null 2>&1; then
             journalctl -n 200 2>/dev/null | tail -n 200 > cibuildwheel-logs/journal-tail.txt || true
           else
             echo "journalctl not available on this runner" > cibuildwheel-logs/journal-tail.txt || true
           fi
+
           # Save last lines of any job logs (best effort)
           echo "Last lines of job log (for convenience):" > cibuildwheel-logs/job-tail.txt || true
-          # the find pattern below is intentionally tolerant
           (tail -n 200 /home/runner/work/*/*/*.log 2>/dev/null || true) >> cibuildwheel-logs/job-tail.txt || true
         continue-on-error: true
-
 
       - name: Upload cibuildwheel logs
         if: always()
@@ -62,14 +63,6 @@ jobs:
         with:
           name: cibuildwheel-logs-${{ matrix.os }}-${{ github.run_id }}
           path: cibuildwheel-logs
-
-
-          # --- DEBUG / STABILITY additions ---
-          # Show more build output so we can see the pip/setuptools/compiler error
-          CIBW_BUILD_VERBOSITY: "2"
-          # Ensure modern pip/setuptools/wheel are used inside the build container
-          CIBW_BEFORE_BUILD: "python -m pip install --upgrade pip setuptools wheel"
-          # ------------------------------------
 
       - name: Upload wheels as artifact
         uses: actions/upload-artifact@v4
@@ -85,7 +78,6 @@ jobs:
     steps:
       - name: Download built wheels (all artifacts)
         uses: actions/download-artifact@v4
-        # download into workspace so artifacts are created as subfolders
         with:
           path: .
 
@@ -93,8 +85,6 @@ jobs:
         run: |
           set -e
           mkdir -p wheelhouse
-          # copy all .whl files from any subfolder into top-level wheelhouse/
-          # '|| true' avoids non-zero exit if find finds nothing (we check later)
           find . -type f -name "*.whl" -print0 | xargs -0 -I{} cp -v {} wheelhouse/ || true
           echo "Collected wheels:"
           ls -la wheelhouse || true
