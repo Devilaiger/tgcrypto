@@ -1,4 +1,5 @@
 [build-system]
+# require a modern setuptools so metadata is handled correctly
 requires = ["setuptools>=65", "wheel"]
 build-backend = "setuptools.build_meta"
 
@@ -11,8 +12,10 @@ requires-python = ">=3.7,<3.15"
 authors = [
   { name = "Dan", email = "dan@pyrogram.org" }
 ]
-# Use an SPDX identifier string or provide text. Avoid the old 'license-file' field.
+# Use SPDX identifier (recommended). This becomes the 'License' metadata.
 license = { text = "LGPL-3.0-or-later" }
+
+# (Optional) keywords, classifiers etc. can be added here later.
 
 [tool.cibuildwheel]
 build = "cp38-* cp39-* cp310-* cp311-* cp312-* cp313-* cp314-*"
