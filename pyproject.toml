@@ -1,5 +1,4 @@
 [build-system]
-# Requires modern setuptools so PEP 621 metadata (license-files) works
 requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
@@ -8,32 +7,52 @@ name = "tgcrypto"
 version = "1.2.5"
 description = "Fast and Portable Cryptography Extension Library for Pyrogram"
 readme = "README.md"
+readme-content-type = "text/markdown"
 requires-python = ">=3.7,<3.15"
 
 authors = [
   { name = "Dan", email = "dan@pyrogram.org" }
 ]
 
-# ✅ Fixed: SPDX identifier (instead of invalid license text table)
+# Use an SPDX expression (string) — avoids deprecated TOML table form
 license = "LGPL-3.0-or-later"
 
-# ✅ Ensures license files are packaged correctly in wheels
-license-files = [
-  "COPYING",
-  "COPYING.lesser",
-  "LICENSE",
-  "NOTICE",
+# Make sure license files are included in built distributions (fixes Twine error)
+license-files = ["COPYING", "COPYING.lesser", "NOTICE"]
+
+# Optional but helpful metadata (PEP 621 fields)
+keywords = ["pyrogram", "telegram", "crypto", "cryptography", "encryption", "mtproto", "extension", "library", "aes"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)",
+  "Operating System :: OS Independent",
+  "Programming Language :: C",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Topic :: Security",
+  "Topic :: Security :: Cryptography",
+  "Topic :: Internet",
+  "Topic :: Communications",
+  "Topic :: Communications :: Chat",
+  "Topic :: Software Development :: Libraries",
+  "Topic :: Software Development :: Libraries :: Python Modules"
 ]
 
-[tool.cibuildwheel]
-# Builds for CPython 3.8 → 3.14
-build = "cp38-* cp39-* cp310-* cp311-* cp312-* cp313-* cp314-*"
+urls = { Tracker = "https://github.com/pyrogram/tgcrypto/issues", Community = "https://t.me/pyrogram", Source = "https://github.com/pyrogram/tgcrypto", Documentation = "https://docs.pyrogram.org" }
 
-# Windows tests hang for tgcrypto, this skips them
+[tool.cibuildwheel]
+build = "cp38-* cp39-* cp310-* cp311-* cp312-* cp313-* cp314-*"
 test-skip = ["*-win*"]
 
 [tool.cibuildwheel.linux]
-# Prevents ubuntu runner from pulling wrong arch images
 archs = ["x86_64", "aarch64"]
 
 [tool.cibuildwheel.macos]
